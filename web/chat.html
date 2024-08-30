@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Web PubSub Client</title>
+</head>
+<body>
+<h1>Azure Web PubSub Client</h1>
+<button id="sendMessage">Send Message to Group</button>
+<div id="messages"></div>
+
+<script>
+    const host = 'http://localhost:3000';
+    async function start() {
+        // Fetch the negotiation URL from the server
+        const response = await fetch(host + '/api/chats/negotiate');
+        const data = await response.json();
+        const socket = new WebSocket(data.url);
+
+        // Connection opened
+        socket.onopen = () => {
+            console.log('Connected to Web PubSub');
+
+            // Send a message to "chats" group
+            document.getElementById('sendMessage').addEventListener('click', () => {
+                fetch(host + '/api/chats/1/messages', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        "payload": "Some text with date: " + new Date(),
+                        "typeId": "text"
+                    })
+                }).then(data => {
+                    console.log('Success:', data);
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            fetch(host + '/api/chats/subscribe', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({})
+            }).then(data => {
+                // Only after successful subscription we can receive messages
+                console.log('Success:', data);
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        };
+
+        // Listen for messages
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("New event", event)
+            if (data.groupName === 'messages') {
+                document.getElementById('messages').innerText += `\nChats: ${data.message}`;
+            } else if (data.groupName === 'notifications') {
+                document.getElementById('messages').innerText += `\nNotifications: ${data.message}`;
+            }
+        };
+
+        // Connection closed
+        socket.onclose = () => {
+            console.log('Disconnected from Web PubSub');
+        };
+
+        // Handle errors
+        socket.onerror = (error) => {
+            console.error('WebSocket Error:', error);
+        };
+    }
+
+    start();
+</script>
+</body>
+</html>
