@@ -5,27 +5,9 @@
  - ### ias - Infrastructure as a code (terraform)
 
 
+GET /api/teams/negogiate
 
-GET /api/chats/negogiate
-
-POST /api/chats/subscribe
-```text
-{
-    "groups":["?"]
-}
-```
-
-GET /api/chats?teamId=1121
-```text
-{
-    "chats":[{
-    "chatId": 123,
-    "name": "Chat name"
-    }]
-}
-```
-
-GET /api/chats/{chatId}/messages?limit=10&offset=0&sort=asc&reference_id=1
+GET /api/teams/{team_id}/messages?limit=10&offset=0&sort=asc&reference_id=1
 ```text
 {
     "payload": "Text | linkToImage",
@@ -34,10 +16,9 @@ GET /api/chats/{chatId}/messages?limit=10&offset=0&sort=asc&reference_id=1
 }
 ```
 
-POST /chats/{chatId}/messages
+POST /teams/{teamId}/messages
 ```text
 {
-    "chatId": 123,
     "payload": "Text | attachmentId",
     "typeId": 1
 }

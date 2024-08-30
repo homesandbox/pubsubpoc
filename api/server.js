@@ -12,6 +12,7 @@ const pubSubServiceClient = new WebPubSubServiceClient(process.env.WEB_PUBSUB_CO
 
 const groupNames = ['messages', 'notifications'];  // List of groups to join
 
+// TODO update rest
 app.get('/api/chats/negotiate', async (req, res) => {
     const userId = 'your-user-id';  // Get from token
 
@@ -25,6 +26,7 @@ app.get('/api/chats/negotiate', async (req, res) => {
 });
 
 // TODO this approach vs pubsubclient?
+// TODO update rest
 app.post('/api/chats/subscribe', async (req, res) => {
     const userId = 'your-user-id';  // Get from token
 
@@ -56,7 +58,7 @@ app.post('/api/chats/1/messages', async (req, res) => {
     // First store message in DB
     await pubSubServiceClient.sendToUser(userId, message, {
         filter: `'${groupName}' in groups`,
-        messageTtlSeconds: 50
+        messageTtlSeconds: 10
     });
     res.json({});
 });
