@@ -22,6 +22,11 @@ app.get('/redirect', (req, res) => {
     res.sendFile(path.join(__dirname + '/static/redirect.html'));
 });
 
+// chat 
+app.get('/chat', (req, res) => {
+	res.sendFile(path.join(__dirname, '/static/chat.html'));
+});
+
 // Set up a route for index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/static/index.html'));

@@ -12,9 +12,18 @@
 
 <script>
     const host = 'http://localhost:3000';
+
+	// token object stored in localStorage under '******-*****-idtoken-******' key.
+	const tokenObjectKey = Object.keys(localStorage).find((key) => key.includes('idtoken'));
+	const tokenObject = localStorage.getItem(tokenObjectKey);
+	const parsedTokenObj = JSON.parse(tokenObject);
+	const rawToken = parsedTokenObj.secret;
+
     async function start() {
         // Fetch the negotiation URL from the server
-        const response = await fetch(host + '/api/chats/negotiate');
+        const response = await fetch(host + '/api/chats/negotiate', {
+			headers: { 'Authorization': `Bearer ${rawToken}`}
+		});
         const data = await response.json();
         const socket = new WebSocket(data.url);
 
@@ -26,7 +35,10 @@
             document.getElementById('sendMessage').addEventListener('click', () => {
                 fetch(host + '/api/chats/1/messages', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${rawToken}`
+					},
                     body: JSON.stringify({
                         "payload": "Some text with date: " + new Date(),
                         "typeId": "text"
@@ -40,7 +52,10 @@
 
             fetch(host + '/api/chats/subscribe', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${rawToken}`
+				},
                 body: JSON.stringify({})
             }).then(data => {
                 // Only after successful subscription we can receive messages
