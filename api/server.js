@@ -15,7 +15,7 @@ const groupNames = ['messages', 'notifications'];  // List of groups to join
 
 // TODO update rest
 app.get('/api/chats/negotiate', validateToken, async (req, res) => {
-    const userId = 'your-user-id';  // Get from token
+    const userId = req.auth?.userId;  // Get from token
 
     // Generate the client access token
     const token = await pubSubServiceClient.getClientAccessToken({
@@ -29,7 +29,7 @@ app.get('/api/chats/negotiate', validateToken, async (req, res) => {
 // TODO this approach vs pubsubclient?
 // TODO update rest
 app.post('/api/chats/subscribe', validateToken, async (req, res) => {
-    const userId = 'your-user-id';  // Get from token
+    const userId = req.auth?.userId;  // Get from token
 
     try {
         for (const groupName of groupNames) {
@@ -47,7 +47,7 @@ app.post('/api/chats/subscribe', validateToken, async (req, res) => {
 app.post('/api/chats/1/messages', validateToken, async (req, res) => {
     console.log("Got send message request, body ", req.body)
     const groupName = 'messages';
-    const userId = 'your-user-id';  // Get from token
+    const userId = req.auth?.userId;  // Get from token
     const message = {
         message: req.body.payload,
         typeId: req.body.typeId,
