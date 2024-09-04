@@ -1,6 +1,7 @@
 const express = require('express');
 const { WebPubSubServiceClient } = require('@azure/web-pubsub');
 const cors = require('cors');
+const { validateToken } = require('./middleware/validateToken');
 require('dotenv').config();
 
 const app = express();
@@ -13,7 +14,7 @@ const pubSubServiceClient = new WebPubSubServiceClient(process.env.WEB_PUBSUB_CO
 const groupNames = ['messages', 'notifications'];  // List of groups to join
 
 // TODO update rest
-app.get('/api/chats/negotiate', async (req, res) => {
+app.get('/api/chats/negotiate', validateToken, async (req, res) => {
     const userId = 'your-user-id';  // Get from token
 
     // Generate the client access token
@@ -27,7 +28,7 @@ app.get('/api/chats/negotiate', async (req, res) => {
 
 // TODO this approach vs pubsubclient?
 // TODO update rest
-app.post('/api/chats/subscribe', async (req, res) => {
+app.post('/api/chats/subscribe', validateToken, async (req, res) => {
     const userId = 'your-user-id';  // Get from token
 
     try {
@@ -43,7 +44,7 @@ app.post('/api/chats/subscribe', async (req, res) => {
     }
 });
 
-app.post('/api/chats/1/messages', async (req, res) => {
+app.post('/api/chats/1/messages', validateToken, async (req, res) => {
     console.log("Got send message request, body ", req.body)
     const groupName = 'messages';
     const userId = 'your-user-id';  // Get from token
