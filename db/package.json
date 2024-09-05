@@ -1,0 +1,15 @@
+{
+  "name": "db",
+  "version": "1.0.0",
+  "description": "db package",
+  "main": "init.js",
+  "scripts": {
+    "db": "node init.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "postgres": "^3.4.4"
+  }
+}
