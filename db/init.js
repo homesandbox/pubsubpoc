@@ -17,8 +17,6 @@ setTimeout(async () => {
 	const isDone = await connection.file('db.sql');
 	if (isDone) {
 		console.info('DB is up. Seeds are loaded');
-	} else {
-		pls();
 	}
 	connection.end();
 }, 5000);
