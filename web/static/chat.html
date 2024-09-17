@@ -121,7 +121,8 @@
 				},
 				body: JSON.stringify({
 					"payload": messageText,
-					"typeId": "text"
+					"typeId": "text",
+					"teamId": '2e09ebaa-22b4-4325-976e-1faa81796016'
 				})
 			}).then(data => {
 				console.log('Success:', data);
@@ -175,11 +176,15 @@
 				const data = JSON.parse(event.data);
 				console.log("New data from socket", data)
 				// TODO: check for incoming message: IF SELF -> DONT SHOW, IF OTHER -> SHOW
-			// 	if (data.groupName === 'messages') {
-			// 		document.getElementById('messages').innerText += `\nChats: ${data.message}`;
-			// 	} else if (data.groupName === 'notifications') {
-			// 		document.getElementById('messages').innerText += `\nNotifications: ${data.message}`;
-			// 	}
+				if (data.groupName === 'messages') {
+					const newMessage = document.createElement('div');
+					newMessage.classList.add('message', 'received');
+					newMessage.innerText = data.message;
+					
+					messageBox.appendChild(newMessage);
+				} else if (data.groupName === 'notifications') {
+					document.getElementById('messages').innerText += `\nNotifications: ${data.message}`;
+				}
 			};
 
 			// Connection closed

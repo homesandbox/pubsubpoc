@@ -28,9 +28,9 @@ const validateToken = async (req, res, next) => {
 		}, (err, decoded) => {
 			if (err?.name === 'TokenExpiredError') {
 				console.info(err);
-				throw new Error('Provided token has expired');
+				
+				return res.end();
 			}
-			console.log('Token is valid', decoded);
 		})
 	});
 
@@ -40,7 +40,7 @@ const validateToken = async (req, res, next) => {
 	}
 
 	req.auth = {
-		userId: payload.emails[0]
+		userEmail: payload.emails[0]
 	};
 
 	next();

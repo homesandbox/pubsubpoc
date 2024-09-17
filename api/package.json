@@ -8,7 +8,8 @@
   "description": "Azure Web PubSub Example with multiple groups",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+	"watch": "node --watch server.js"
   },
   "dependencies": {
     "@azure/web-pubsub": "^1.0.1",

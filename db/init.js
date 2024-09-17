@@ -19,4 +19,4 @@ setTimeout(async () => {
 		console.info('DB is up. Seeds are loaded');
 	}
 	connection.end();
-}, 5000);
+}, 10000);
