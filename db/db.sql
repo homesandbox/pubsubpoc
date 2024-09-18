@@ -35,22 +35,6 @@ CREATE TABLE IF NOT EXISTS "message_type" (
 	CONSTRAINT "message_type_check" CHECK ("type" IN ('TEXT', 'ATTACHMENT'))
 );
 
-CREATE TABLE IF NOT EXISTS "chat" (
-	"id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-	"azure_hub_id" TEXT,
-	"name" TEXT,
-	"created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS "chat_partisipants" (
-	"id" UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-	"chat_id" UUID REFERENCES "chat"("id") ON DELETE CASCADE NOT NULL,
-	"user_id" UUID REFERENCES "user"("id") ON DELETE CASCADE NOT NULL,
-	"created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
-);
-
-ALTER TABLE "public"."chat_partisipants" ADD CONSTRAINT "no_duplicate_user_in_chat_check" UNIQUE ("chat_id", "user_id");
-
 -- seeds
 DO $$
 BEGIN
@@ -64,22 +48,6 @@ BEGIN
 		VALUES
 			('TEXT'),
 			('ATTACHMENT')
-		;
-	END IF;
-END $$;
-
-DO $$
-BEGIN
-	IF NOT EXISTS (
-		SELECT 1
-		FROM "public"."chat"
-		WHERE "name" IN ('messages', 'notifications')
-	) THEN
-		INSERT INTO "public"."chat"
-			("name")
-		VALUES
-			('messages'),
-			('notifications')
 		;
 	END IF;
 END $$;

@@ -97,6 +97,10 @@
     </div>
 
     <script>
+		const host = 'http://localhost:3000';
+		const teamId = '1a4d38b0-644d-4809-a269-5aee6ff97918';
+		const currentUserId = '6952b114-f736-456b-887b-dd54a61d86c2';
+
 		function sendMessage() {
 			const messageBox = document.getElementById('messageBox');
 			const messageInput = document.getElementById('messageInput');
@@ -113,7 +117,8 @@
 				messageInput.value = ""; // Clear the input field
 			}
 			// Send a message to "chats" group
-			fetch(host + '/api/chats/1/messages', {
+
+			fetch(host + `/api/teams/${teamId}/messages`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -122,7 +127,6 @@
 				body: JSON.stringify({
 					"payload": messageText,
 					"typeId": "text",
-					"teamId": '2e09ebaa-22b4-4325-976e-1faa81796016'
 				})
 			}).then(data => {
 				console.log('Success:', data);
@@ -136,7 +140,6 @@
 				sendMessage();
 			}
     	});
-		const host = 'http://localhost:3000';
 
 		// token object stored in localStorage under '******-*****-idtoken-******' key.
 		const tokenObjectKey = Object.keys(localStorage).find((key) => key.includes('idtoken'));
@@ -145,8 +148,27 @@
 		const rawToken = parsedTokenObj.secret;
 
 		async function start() {
+			// get last messages
+			const history = await fetch(host + `/api/teams/${teamId}/messages`, {
+				headers: { 'Authorization': `Bearer ${rawToken}`},
+			});
+			const historyData = await history.json();
+			
+			if (historyData.messages.length !== 0) {
+				console.log(historyData.messages)
+				historyData.messages.forEach((message) => {
+					const newMessage = document.createElement('div');
+					const messageType = message.sender_id === currentUserId ? 'sent' : 'received';
+				
+					newMessage.classList.add('message', messageType);
+					newMessage.innerText = message.payload;
+					
+					messageBox.appendChild(newMessage);
+				})
+			}
+
 			// Fetch the negotiation URL from the server
-			const response = await fetch(host + '/api/chats/negotiate', {
+			const response = await fetch(host + '/api/teams/negotiate', {
 				headers: { 'Authorization': `Bearer ${rawToken}`}
 			});
 			const data = await response.json();
@@ -156,7 +178,7 @@
 			socket.onopen = () => {
 				console.log('Connected to Web PubSub');
 
-				fetch(host + '/api/chats/subscribe', {
+				fetch(host + '/api/teams/subscribe', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -175,7 +197,7 @@
 			socket.onmessage = (event) => {
 				const data = JSON.parse(event.data);
 				console.log("New data from socket", data)
-				// TODO: check for incoming message: IF SELF -> DONT SHOW, IF OTHER -> SHOW
+
 				if (data.groupName === 'messages') {
 					const newMessage = document.createElement('div');
 					newMessage.classList.add('message', 'received');
