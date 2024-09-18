@@ -117,6 +117,8 @@
 				messageInput.value = ""; // Clear the input field
 			}
 			// Send a message to "chats" group
+			const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/[^\s]*)?$/;
+			const isAttachment = urlRegex.test(messageText);
 
 			fetch(host + `/api/teams/${teamId}/messages`, {
 				method: 'POST',
@@ -126,7 +128,7 @@
 				},
 				body: JSON.stringify({
 					"payload": messageText,
-					"typeId": "text",
+					"typeId": isAttachment ? 2 : 1,
 				})
 			}).then(data => {
 				console.log('Success:', data);
